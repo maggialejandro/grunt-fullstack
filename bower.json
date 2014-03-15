@@ -5,5 +5,9 @@
     "Alejandro M. <alejandro.maggi@hotmail.com>"
   ],
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "es5-shim": "~2.3.0",
+    "json3": "~3.3.0"
+  }
 }
