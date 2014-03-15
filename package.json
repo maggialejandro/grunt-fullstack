@@ -21,6 +21,7 @@
     "jshint-stylish": "~0.1.5",
     "grunt-contrib-watch": "~0.6.0",
     "grunt-open": "~0.2.3",
-    "grunt-express-server": "~0.4.13"
+    "grunt-express-server": "~0.4.13",
+    "grunt-contrib-requirejs": "~0.4.3"
   }
 }

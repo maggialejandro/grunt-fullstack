@@ -14,6 +14,23 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
+  var files = grunt.file.expand('app/scripts/*.js');
+  var requirejsOptions = {};
+
+  files.forEach(function(file) {
+      var filename = file.split('/').pop();
+      if(filename != 'common.js'){
+        requirejsOptions[filename] = {
+          options: {
+              baseUrl: 'app/scripts/',
+              include: './'+filename,
+              out: 'dist/public/js/'+filename
+          }
+        };
+      }
+
+  });
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 
@@ -40,6 +57,7 @@ module.exports = function (grunt) {
         }
       }
     },
+    requirejs: requirejsOptions,
     open: {
       server: {
         url: 'http://localhost:<%= express.options.port %>'
@@ -396,4 +414,6 @@ module.exports = function (grunt) {
     'open',
     'watch'
   ]);
+
+  grunt.registerTask('build', 'requirejs');
 };
