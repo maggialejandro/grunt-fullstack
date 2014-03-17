@@ -14,17 +14,24 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
+  // Get require.js configs for each page
   var files = grunt.file.expand('app/scripts/*.js');
   var requirejsOptions = {};
 
   files.forEach(function(file) {
       var filename = file.split('/').pop();
+
       if(filename != 'common.js'){
         requirejsOptions[filename] = {
           options: {
-              baseUrl: 'app/scripts/',
-              include: './'+filename,
-              out: 'dist/public/js/'+filename
+              baseUrl: 'app/scripts',
+              mainConfigFile : "./app/scripts/"+filename,
+              name: filename.split('.')[0],
+              paths: {
+                requireLib: 'libs/require'
+              },
+              include: 'requireLib',
+              out: 'dist/public/scripts/'+filename
           }
         };
       }
@@ -162,10 +169,11 @@ module.exports = function (grunt) {
     },
 
     // Automatically inject Bower components into the app
-    'bower-install': {
-      app: {
-        html: '<%= yeoman.app %>/views/index.html',
-        ignorePath: '<%= yeoman.app %>/'
+    bowerInstall: {
+      target: {
+        src: [
+          'app/views/*.ejs'
+        ]
       }
     },
 
@@ -174,9 +182,9 @@ module.exports = function (grunt) {
       dist: {
         files: {
           src: [
-            '<%= yeoman.dist %>/public/scripts/{,*/}*.js',
+            //'<%= yeoman.dist %>/public/js/{,*/}*.js',
             '<%= yeoman.dist %>/public/styles/{,*/}*.css',
-            '<%= yeoman.dist %>/public/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+            //'<%= yeoman.dist %>/public/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
             '<%= yeoman.dist %>/public/styles/fonts/*'
           ]
         }
@@ -187,8 +195,9 @@ module.exports = function (grunt) {
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
     useminPrepare: {
-      html: ['<%= yeoman.app %>/views/index.html',
-             '<%= yeoman.app %>/views/index.jade'],
+      html: [
+        '<%= yeoman.app %>/views/*.ejs'
+      ],
       options: {
         dest: '<%= yeoman.dist %>/public'
       }
@@ -196,7 +205,7 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on rev and the useminPrepare configuration
     usemin: {
-      html: ['<%= yeoman.dist %>/views/{,*/}*.html',
+      html: ['<%= yeoman.dist %>/views/{,*/}*.ejs',
              '<%= yeoman.dist %>/views/{,*/}*.jade'],
       css: ['<%= yeoman.dist %>/public/styles/{,*/}*.css'],
       options: {
@@ -238,8 +247,21 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>/views',
-          src: ['*.html', 'partials/**/*.html'],
+          src: ['*.ejs', 'partials/**/*.ejs'],
           dest: '<%= yeoman.dist %>/views'
+        }]
+      }
+    },
+
+    // Allow the use of non-minsafe AngularJS files. Automatically makes it
+    // minsafe compatible so Uglify does not destroy the ng references
+    ngmin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.tmp/concat/scripts',
+          src: '*.js',
+          dest: '.tmp/concat/scripts'
         }]
       }
     },
@@ -247,7 +269,7 @@ module.exports = function (grunt) {
     // Replace Google CDN references
     cdnify: {
       dist: {
-        html: ['<%= yeoman.dist %>/views/*.html']
+        html: ['<%= yeoman.dist %>/views/*.ejs']
       }
     },
 
@@ -279,6 +301,13 @@ module.exports = function (grunt) {
           src: ['generated/*']
         }, {
           expand: true,
+          cwd: '<%= yeoman.app %>/scripts/libs',
+          dest: '<%= yeoman.dist %>/public/scripts/libs',
+          src: [
+            'require.js'
+          ]
+        }, {  
+          expand: true,
           dest: '<%= yeoman.dist %>',
           src: [
             'package.json',
@@ -306,7 +335,7 @@ module.exports = function (grunt) {
       dist: [
         'copy:styles',
         'imagemin',
-        'svgmin',
+        //'svgmin',
         'htmlmin'
       ]
     },
@@ -384,16 +413,17 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'bower-install',
+    'requirejs',
+    'bowerInstall',
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',
-    'concat',
-    'ngmin',
+    'concat', //concat on .tmp
+    //'ngmin',
     'copy:dist',
     'cdnify',
-    'cssmin',
-    'uglify',
+    'cssmin', //sin esto no genera los css
+    //'uglify', //no se usa ya que lo hace r.js
     'rev',
     'usemin'
   ]);
@@ -415,5 +445,9 @@ module.exports = function (grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('build', 'requirejs');
+  grunt.registerTask('req', [
+    'clean:dist',
+    'requirejs'
+  ]);
+
 };

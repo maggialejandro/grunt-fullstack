@@ -23,6 +23,6 @@ requirejs.config({
         "underscore" : "../bower_components/underscore/underscore",
 		"backbone" : "../bower_components/backbone/backbone",
 		"bootstrap" : "../bower_components/dist/js/bootstrap",
-		"text": "lib/text" //require.js text
+		"text": "libs/text" //require.js text
     }
 });
