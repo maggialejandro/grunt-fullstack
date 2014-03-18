@@ -24,14 +24,15 @@ module.exports = function (grunt) {
       if(filename != 'common.js'){
         requirejsOptions[filename] = {
           options: {
-              baseUrl: 'app/scripts',
-              mainConfigFile : "./app/scripts/"+filename,
-              name: filename.split('.')[0],
+              baseUrl: '<%= yeoman.app %>/scripts',
+              mainConfigFile : "<%= yeoman.app %>/scripts/common.js",
               paths: {
                 requireLib: 'libs/require'
               },
               include: 'requireLib',
-              out: 'dist/public/scripts/'+filename
+              findNestedDependencies: true,
+              name: filename.split('.')[0],
+              out: '<%= yeoman.dist %>/public/scripts/'+filename
           }
         };
       }
