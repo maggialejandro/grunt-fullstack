@@ -446,6 +446,10 @@ module.exports = function (grunt) {
     'watch'
   ]);
 
+  grunt.registerTask('de', [
+    'express:dev'
+  ]);
+
   grunt.registerTask('req', [
     'clean:dist',
     'requirejs'

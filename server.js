@@ -36,9 +36,14 @@ sequelize
 require('./lib/routes')(app);
 
 // Start server
-http.createServer(app).listen(app.get('port'), function() {
+var server = http.createServer(app).listen(app.get('port'), function() {
 	console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
 });
+
+var io = require('socket.io').listen(server);
+
+// Events
+require('./lib/events')(app, io);
 
 // Expose app
 exports = module.exports = app;
