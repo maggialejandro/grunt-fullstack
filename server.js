@@ -2,7 +2,7 @@
 
 // Module dependencies
 var express = require('express'),
-	  http = require('http');
+    http = require('http');
 
 /**
  * Main application file
@@ -21,15 +21,15 @@ require('./lib/config/express')(app);
 
 /* Sequelize Sync
 sequelize
-	.sequelize
-  	.sync({force:true})
-  	.complete(function(err) {
-    	if (err) {
-     		throw err
-    	} else {
-      		console.log('Sequelize sync complete');
-    	}
-  	});
+  .sequelize
+    .sync({force:true})
+    .complete(function(err) {
+      if (err) {
+        throw err
+      } else {
+          console.log('Sequelize sync complete');
+      }
+    });
 */
 
 // Routing
@@ -37,7 +37,7 @@ require('./lib/routes')(app);
 
 // Start server
 var server = http.createServer(app).listen(app.get('port'), function() {
-	console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
+  console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
 });
 
 var io = require('socket.io').listen(server);
