@@ -10,8 +10,7 @@ define([
 		},
 		initialize: function(){
 			window.socket = io.connect('http://192.168.0.2:3000');
-			window.socket.emit('terminalConectado', {});
-			this.screenView = new ScreenView();
+			
 			Backbone.history.start();
 		},
 		usuarios: function(){
