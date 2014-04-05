@@ -58,6 +58,12 @@ module.exports = function (grunt) {
           debug: true
         }
       },
+      test: {
+        options: {
+          script: 'server.js',
+          node_env: 'test'
+        }
+      },
       prod: {
         options: {
           script: 'dist/server.js',
@@ -68,20 +74,21 @@ module.exports = function (grunt) {
     requirejs: requirejsOptions,
     open: {
       server: {
-        url: 'http://localhost:<%= express.options.port %>'
+        url: 'http://localhost:<%= express.options.port %>',
+        app: 'Firefox'
       }
     },
     watch: {
       js: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-        tasks: ['newer:jshint:all'],
+        //tasks: ['newer:jshint:all'],
         options: {
           livereload: true
         }
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+        //tasks: ['newer:copy:styles', 'autoprefixer']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -103,7 +110,8 @@ module.exports = function (grunt) {
           'server.js',
           'lib/**/*.{js,json}'
         ],
-        tasks: ['newer:jshint:server', 'express:dev', 'wait'],
+        //tasks: ['newer:jshint:server', 'express:dev', 'wait'],
+        tasks: ['express:dev'],
         options: {
           livereload: true,
           nospawn: true //Without this option specified express won't be reloaded
@@ -214,18 +222,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // The following *-min tasks produce minified files in the dist folder
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= yeoman.dist %>/public/images'
-        }]
-      }
-    },
-
     svgmin: {
       dist: {
         files: [{
@@ -264,13 +260,6 @@ module.exports = function (grunt) {
           src: '*.js',
           dest: '.tmp/concat/scripts'
         }]
-      }
-    },
-
-    // Replace Google CDN references
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/views/*.ejs']
       }
     },
 
@@ -335,7 +324,6 @@ module.exports = function (grunt) {
       ],
       dist: [
         'copy:styles',
-        'imagemin',
         //'svgmin',
         'htmlmin'
       ]
@@ -405,29 +393,6 @@ module.exports = function (grunt) {
     grunt.task.run(['serve']);
   });
 
-  grunt.registerTask('test', [
-    'clean:server',
-    'concurrent:test',
-    'autoprefixer',
-    'karma'
-  ]);
-
-  grunt.registerTask('build', [
-    'clean:dist',
-    'requirejs',
-    'bowerInstall',
-    'useminPrepare',
-    'concurrent:dist',
-    'autoprefixer',
-    'concat', //concat on .tmp
-    //'ngmin',
-    'copy:dist',
-    'cdnify',
-    'cssmin', //sin esto no genera los css
-    //'uglify', //no se usa ya que lo hace r.js
-    'rev',
-    'usemin'
-  ]);
 
   grunt.registerTask('heroku', function () {
     grunt.log.warn('The `heroku` task has been deprecated. Use `grunt build` to build for deployment.');
@@ -446,13 +411,31 @@ module.exports = function (grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('de', [
-    'express:dev'
+  grunt.registerTask('alfa', [
+    'express:test',
+    'jshint:server',
+    'open'
   ]);
 
-  grunt.registerTask('req', [
+  grunt.registerTask('build', [
     'clean:dist',
-    'requirejs'
+    'requirejs',
+    'bowerInstall',
+    'useminPrepare',
+    'concurrent:dist',
+    'autoprefixer',
+    'concat', //concat on .tmp
+    //'ngmin',
+    'copy:dist',
+    'cssmin', //sin esto no genera los css
+    //'uglify', //no se usa ya que lo hace r.js
+    'rev',
+    'usemin'
+  ]);
+
+  grunt.registerTask('beta', [
+    'express:prod',
+
   ]);
 
 };
