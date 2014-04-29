@@ -1,15 +1,16 @@
 'use strict';
 
+// Set default node environment to development
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 // Module dependencies
 var express = require('express'),
-    http = require('http');
+    http = require('http'),
+    config = require('./lib/config/config');
 
 /**
  * Main application file
  */
-
-// Set default node environment to development
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var app = express();
 
@@ -17,9 +18,9 @@ var app = express();
 require('./lib/config/express')(app);
 
 // Sequelize
-//var sequelize = require('./lib/db/sequelize');
+/*
+var sequelize = require('./lib/db/sequelize');
 
-/* Sequelize Sync
 sequelize
   .sequelize
     .sync({force:true})
@@ -31,13 +32,12 @@ sequelize
       }
     });
 */
-
 // Routing
 require('./lib/routes')(app);
 
 // Start server
-var server = http.createServer(app).listen(app.get('port'), function() {
-  console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
+var server = app.listen(config.port, config.ip, function () {
+  console.log('Express server listening on %s:%d, in %s mode', config.ip, config.port, app.get('env'));
 });
 
 var io = require('socket.io').listen(server);
